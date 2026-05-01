@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sparsh Sharma — falsification methodology &amp; cross-cultural retrieval</title>
+<meta name="description" content="Open-source falsification harness for retrieval and ranking systems. Cross-cultural Sanskrit-Dravidian retrieval research.">
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --ink-soft:#3d3d3d;
+    --ink-faint:#7a7a7a;
+    --paper:#fbf8f3;
+    --rule:#d9d2c3;
+    --accent:#8b3a1f;
+    --code-bg:#f1ece1;
+  }
+  *{box-sizing:border-box}
+  html{font-size:17px}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Charter,"Iowan Old Style",Georgia,Cambria,"Times New Roman",serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  main{
+    max-width:38rem;
+    margin:0 auto;
+    padding:4rem 1.5rem 6rem;
+  }
+  header{margin-bottom:2.5rem}
+  h1{
+    font-size:1.6rem;
+    font-weight:600;
+    margin:0 0 .25rem;
+    letter-spacing:-.005em;
+  }
+  .tagline{
+    color:var(--ink-soft);
+    font-size:1.05rem;
+    margin:0 0 .6rem;
+    font-style:italic;
+  }
+  .meta{
+    color:var(--ink-faint);
+    font-size:.92rem;
+    margin:0;
+  }
+  .meta a{color:var(--ink-faint);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:2px}
+  .meta a:hover{color:var(--accent);text-decoration-color:var(--accent)}
+  section{margin:2.2rem 0}
+  h2{
+    font-size:.78rem;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.13em;
+    color:var(--ink-faint);
+    border-bottom:1px solid var(--rule);
+    padding-bottom:.4rem;
+    margin:0 0 1rem;
+  }
+  p{margin:0 0 1rem}
+  a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2.5px}
+  a:hover{text-decoration-thickness:2px}
+  .artifact{
+    border:1px solid var(--rule);
+    border-radius:3px;
+    padding:1rem 1.1rem;
+    margin-bottom:.9rem;
+    background:#fefdfa;
+  }
+  .artifact h3{
+    font-size:1.02rem;
+    margin:0 0 .35rem;
+    font-weight:600;
+  }
+  .artifact .sub{
+    color:var(--ink-faint);
+    font-size:.88rem;
+    margin:0 0 .55rem;
+  }
+  .artifact .links{
+    font-size:.92rem;
+    margin:0;
+  }
+  .artifact .links a{margin-right:1rem}
+  code{
+    font-family:"SF Mono",Menlo,Consolas,monospace;
+    font-size:.86rem;
+    background:var(--code-bg);
+    padding:.08rem .32rem;
+    border-radius:2px;
+    color:var(--ink);
+  }
+  pre{
+    font-family:"SF Mono",Menlo,Consolas,monospace;
+    font-size:.84rem;
+    background:var(--code-bg);
+    padding:.85rem 1rem;
+    border-radius:3px;
+    overflow-x:auto;
+    margin:.6rem 0 1.2rem;
+    line-height:1.45;
+  }
+  pre code{background:none;padding:0}
+  .epigraph{
+    margin-top:5rem;
+    padding-top:1.5rem;
+    border-top:1px solid var(--rule);
+    text-align:center;
+    color:var(--ink-faint);
+    font-size:.95rem;
+    line-height:1.7;
+  }
+  .epigraph .deva{
+    font-family:"Sanskrit Text","Adobe Devanagari","Noto Serif Devanagari",serif;
+    font-size:1.4rem;
+    color:var(--ink-soft);
+    display:block;
+    margin-bottom:.3rem;
+    letter-spacing:.04em;
+  }
+  .epigraph .iast{font-style:italic;color:var(--ink-faint);font-size:.88rem}
+  .epigraph .source{font-size:.78rem;color:var(--ink-faint);margin-top:.4rem;display:block}
+  footer{
+    margin-top:3rem;
+    font-size:.82rem;
+    color:var(--ink-faint);
+    text-align:center;
+  }
+  footer a{color:var(--ink-faint)}
+  @media (max-width: 480px){
+    html{font-size:16px}
+    main{padding:2.5rem 1.2rem 4rem}
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <h1>Sparsh Sharma</h1>
+  <p class="tagline">Falsification methodology for retrieval; cross-cultural Sanskrit&ndash;Dravidian engines.</p>
+  <p class="meta">
+    Melbourne, Australia &nbsp;&middot;&nbsp;
+    <a href="https://github.com/spalsh-spec">github</a> &nbsp;&middot;&nbsp;
+    <a href="mailto:sparshsharma219@gmail.com">email</a>
+  </p>
+</header>
+
+<section>
+  <h2>What I work on</h2>
+  <p>
+    Most evaluation harnesses for retrieval and ranking systems will quietly accept a
+    constant predictor that exploits the gold label distribution. The standard
+    permutation null does not catch this; the standard random-retrieval null does not
+    catch it either. I work on the small piece of statistical machinery that does.
+  </p>
+  <p>
+    The applied side is a retrieval engine for cross-cultural Sanskrit and Dravidian
+    text alignment &mdash; an under-served corner of computational philology where
+    the hard parts (long compounds, oral-prosodic features, sparse parallel data)
+    push retrieval methodology in useful directions.
+  </p>
+</section>
+
+<section>
+  <h2>Open artifacts</h2>
+
+  <div class="artifact">
+    <h3>falsify-eval &nbsp;<span style="color:var(--ink-faint);font-weight:400;font-size:.85rem">v0.1.0</span></h3>
+    <p class="sub">
+      Four-null falsification gate (incl. gold marginal-matched random &mdash; the
+      contribution that catches constant predictors). Bootstrap CIs, paired permutation
+      tests, cryptographic state lock for pre-registration. Apache-2.0. Pure stdlib + numpy.
+    </p>
+    <p class="links">
+      <a href="https://github.com/spalsh-spec/falsify-eval">github&nbsp;&rarr;</a>
+      <a href="https://github.com/spalsh-spec/falsify-eval/releases/tag/v0.1.0">release notes</a>
+      <a href="https://github.com/spalsh-spec/falsify-eval/blob/main/examples/synthetic_demo.py">demo</a>
+    </p>
+  </div>
+
+  <div class="artifact">
+    <h3>Methodology preprint</h3>
+    <p class="sub">
+      <em>A four-null falsification gate for retrieval evaluation, with a positive-control
+      protocol against constant and marginal-exploiting predictors.</em> Validated on
+      N&nbsp;=&nbsp;10,000 synthetic queries; broken-predictor suite; sensitivity grid;
+      bench-size calibration curve. Submission to arXiv pending.
+    </p>
+    <p class="links">
+      <a href="https://github.com/spalsh-spec/falsify-eval#preprint">preprint draft (markdown)</a>
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>Quickstart</h2>
+  <pre><code>pip install -e git+https://github.com/spalsh-spec/falsify-eval.git#egg=falsify-eval
+python -c "from falsify_eval import four_null_gate; help(four_null_gate)"</code></pre>
+  <p style="font-size:.92rem;color:var(--ink-soft)">
+    Or clone and run the 50-query synthetic demo: <code>python examples/synthetic_demo.py</code>.
+    Expected verdict: <code>constant_predictor</code> fails (Null&nbsp;D rejects),
+    <code>oracle</code> passes, <code>mock_engine</code> passes.
+  </p>
+</section>
+
+<section>
+  <h2>Background</h2>
+  <p style="font-size:.95rem;color:var(--ink-soft)">
+    Undergraduate at RMIT University. Interested in any work that pushes retrieval
+    evaluation toward the standards held by adjacent fields (clinical trials,
+    psychometrics, computational philology). Reachable by email or LinkedIn for
+    collaboration on falsification methodology, low-resource philological corpora,
+    or both.
+  </p>
+</section>
+
+<div class="epigraph">
+  <span class="deva">नेति&nbsp;&middot;&nbsp;नेति</span>
+  <span class="iast">neti&nbsp;neti &mdash; &ldquo;not this, not this&rdquo;</span>
+  <span class="source">Bṛhadāraṇyaka Upaniṣad 2.3.6</span>
+</div>
+
+<footer>
+  &copy; 2026 &middot; built without trackers &middot;
+  <a href="https://github.com/spalsh-spec/spalsh-spec.github.io">source</a>
+</footer>
+
+</main>
+</body>
+</html>
