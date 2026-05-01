@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /_build_og.py
+
+Sitemap: https://spalsh-spec.github.io/sitemap.xml
