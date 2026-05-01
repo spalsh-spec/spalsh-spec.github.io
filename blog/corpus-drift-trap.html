@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate" type="application/rss+xml" title="Sparsh Sharma — blog" href="/feed.xml">
+<style>
+  :root{--ink:#1a1a1a;--ink-soft:#3d3d3d;--ink-faint:#7a7a7a;--paper:#fbf8f3;--rule:#d9d2c3;--accent:#8b3a1f;--code-bg:#f1ece1}
+  *{box-sizing:border-box}
+  html{font-size:17px}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:Charter,"Iowan Old Style",Georgia,Cambria,"Times New Roman",serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+  main{max-width:38rem;margin:0 auto;padding:3rem 1.5rem 5rem}
+  .breadcrumb{font-size:.85rem;color:var(--ink-faint);margin-bottom:2rem}
+  .breadcrumb a{color:var(--ink-faint);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:2px}
+  .breadcrumb a:hover{color:var(--accent);text-decoration-color:var(--accent)}
+  h1{font-size:1.75rem;font-weight:600;margin:0 0 .35rem;letter-spacing:-.005em;line-height:1.25}
+  .post-meta{color:var(--ink-faint);font-size:.88rem;margin:0 0 .25rem}
+  .lede{font-style:italic;color:var(--ink-soft);margin:.5rem 0 2rem;font-size:1.06rem;line-height:1.55}
+  article h2{font-size:1.25rem;margin-top:2.4rem;margin-bottom:.7rem;font-weight:600;letter-spacing:-.003em}
+  article h3{font-size:1.05rem;margin-top:1.8rem;margin-bottom:.5rem;font-weight:600}
+  article p{margin:0 0 1.1rem}
+  article a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2.5px}
+  article a:hover{text-decoration-thickness:2px}
+  article ul,article ol{padding-left:1.4rem;margin:0 0 1.1rem}
+  article li{margin-bottom:.35rem}
+  article hr{border:0;border-top:1px solid var(--rule);margin:2rem 0}
+  article blockquote{border-left:3px solid var(--rule);margin:1rem 0;padding:.2rem 0 .2rem 1rem;color:var(--ink-soft);font-style:italic}
+  article table{border-collapse:collapse;margin:1rem 0;font-size:.94rem;width:100%}
+  article th,article td{border:1px solid var(--rule);padding:.4rem .6rem;text-align:left}
+  article th{background:#f3eee2;font-weight:600}
+  code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.86rem;background:var(--code-bg);padding:.08rem .32rem;border-radius:2px;color:var(--ink)}
+  pre{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.84rem;background:var(--code-bg);padding:.85rem 1rem;border-radius:3px;overflow-x:auto;margin:.6rem 0 1.4rem;line-height:1.5}
+  pre code{background:none;padding:0}
+  .post-list{list-style:none;padding:0;margin:0}
+  .post-list li{margin-bottom:1.5rem;padding-bottom:1.4rem;border-bottom:1px solid var(--rule)}
+  .post-list li:last-child{border-bottom:none}
+  .post-list .title{font-size:1.1rem;font-weight:600;display:block;margin-bottom:.2rem}
+  .post-list .title a{color:var(--ink);text-decoration:none}
+  .post-list .title a:hover{color:var(--accent);text-decoration:underline}
+  .post-list .date{color:var(--ink-faint);font-size:.85rem;margin-bottom:.4rem}
+  .post-list .lede-mini{color:var(--ink-soft);font-size:.96rem;font-style:italic;line-height:1.5}
+  footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--rule);font-size:.82rem;color:var(--ink-faint);text-align:center}
+  footer a{color:var(--ink-faint)}
+  @media (max-width:480px){html{font-size:16px}main{padding:2rem 1.2rem 3rem}}
+</style>
+<title>The corpus drift trap: why your RAG&#x27;s nDCG is probably lying to you — Sparsh Sharma</title>
+<meta name="description" content="A debugging story, and a 200-line tool that prevents the next one.">
+<meta name="author" content="Sparsh Sharma">
+<link rel="canonical" href="https://spalsh-spec.github.io/blog/corpus-drift-trap.html">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://spalsh-spec.github.io/blog/corpus-drift-trap.html">
+<meta property="og:title" content="The corpus drift trap: why your RAG&#x27;s nDCG is probably lying to you">
+<meta property="og:description" content="A debugging story, and a 200-line tool that prevents the next one.">
+<meta property="og:image" content="https://spalsh-spec.github.io/og-image.png">
+<meta property="article:published_time" content="2026-05-01">
+<meta property="article:author" content="Sparsh Sharma">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The corpus drift trap: why your RAG&#x27;s nDCG is probably lying to you">
+<meta name="twitter:description" content="A debugging story, and a 200-line tool that prevents the next one.">
+<meta name="twitter:image" content="https://spalsh-spec.github.io/og-image.png">
+</head>
+<body>
+<main>
+<nav class="breadcrumb"><a href="/">home</a> &nbsp;/&nbsp; <a href="/blog/">blog</a> &nbsp;/&nbsp; <span>corpus-drift-trap</span></nav>
+<header>
+  <h1>The corpus drift trap: why your RAG&#x27;s nDCG is probably lying to you</h1>
+  <p class="post-meta">1 May 2026 &nbsp;&middot;&nbsp; Sparsh Sharma</p>
+  <p class="lede">A debugging story, and a 200-line tool that prevents the next one.</p>
+</header>
+<article>
+<hr />
+<p>This morning I sat down to work on a Sanskrit retrieval engine. The README claimed <code>nDCG@5 = 0.7891</code>. The bench reported <code>0.7620</code>. The gap is 0.027 — tiny in absolute terms, but the README pinned that number to a specific commit (<code>39f9b7c</code>) and said &quot;verified.&quot; Either the README was wrong or something had silently broken. I spent the first hour assuming a code regression. I was wrong. The actual culprit is one of the most underrated bugs in modern ML evaluation, and almost every RAG pipeline I've audited has some flavour of it.</p>
+<p>This post is the detective story. It ends with a 200-line tool that I'd put in every retrieval repo I touch from now on.</p>
+<h2>Setup</h2>
+<p>Vāk-Kaṇaja is a small retrieval engine over thirteen classical Sanskrit and Dravidian texts — Yogasūtra, Upaniṣads, Pāṇini's grammar, Arthaśāstra, that lineage. About 6,300 text chunks. The bench is twenty-one English queries with whole-text gold labels (relevance ∈ {2, 3}) and an nDCG@5 metric. Nothing exotic.</p>
+<p>The codebase has a pleasant rhythm: each commit on the <code>phase1-fractal-upgrades</code> branch lands one item from a research dossier, with a commit message that always includes the resulting <code>nDCG@5</code>. Authors of the previous commits had been fastidious about this — most messages literally say <code>score-neutral nDCG@5=X.YYYY</code> to flag refactors that shouldn't have moved the needle.</p>
+<p>So when today's bench reported 0.7620 against a README that said 0.7891, my first instinct was: bisect.</p>
+<h2>The first wrong hypothesis</h2>
+<p>The two suspect commits looked like this:</p>
+<pre><code>39f9b7c  phase1 step1.5: fractal channel disabled (winner), nDCG=0.7891
+e3c2748  phase-A:  pre-Phase-8 hygiene  (10 audit items, score-neutral nDCG@5=0.7620)
+8265bf1  phase-B:  verification surface (5 audit items, score-neutral nDCG@5=0.7712)
+</code></pre>
+<p>Look at that gap. Phase-A claims &quot;score-neutral&quot; but lands at 0.7620. The previous baseline was 0.7891. That's a 0.027 drop labelled as zero. Either the author miscounted, or they measured against a different state than I'm measuring against.</p>
+<p>I started reading phase-A's diff. Twenty-one files changed. Most of it was hygiene: <code>print()</code> → <code>logger.info()</code>, <code>except Exception:</code> → typed catches, file moves, gitignore additions, requirements lock cleanup. The only retrieval-path file touched was <code>retrieval/kanaja_fsh.py</code>, with 23 line changes. I read every one. They were <em>all</em> <code>print</code> → <code>logger</code> substitutions plus one exception handler that swallowed the same exception either way (just logged it now). Truly inert.</p>
+<p>This is when most engineers would assume the README's 0.7891 was wrong. Move on, update the README, ship.</p>
+<h2>The second wrong hypothesis</h2>
+<p>I almost did, then noticed something. The corpus database file (<code>corpus/fractal_signatures.db</code>) had a modification time that didn't match either commit. It had been touched ~27 minutes before the phase-A commit landed. The schema, when I dumped it, had a trail of <code>ALTER TABLE</code> columns — <code>h2</code>, <code>asym_f</code>, <code>lacunarity</code> — added across multiple later commits.</p>
+<p>In other words: the corpus DB was a moving target. The bench at any commit was reading from whatever state the DB happened to be in, not from a state pinned to that commit.</p>
+<p>This shifted the hypothesis: maybe the regression isn't in code at all. Maybe the same code today produces a different score than the same code three weeks ago because the DB it reads has changed.</p>
+<p>The clean test: check out <code>39f9b7c</code> in a <code>git worktree</code>, point it at today's runtime corpus DB, run the bench. If it scores 0.7891 (the README's claim), the regression is in newer code. If it scores something else, the regression is in the corpus.</p>
+<pre><code class="language-bash">git worktree add /tmp/vak39f9b7c 39f9b7c
+ln -sf .../fractal_signatures.db /tmp/vak39f9b7c/corpus/fractal_signatures.db
+ln -sf .../faiss_index.bin       /tmp/vak39f9b7c/corpus/faiss_index.bin
+# ... and the rest of the corpus artifacts
+cd /tmp/vak39f9b7c &amp;&amp; python3 tests/sanskrit_bench.py
+</code></pre>
+<p>The result: <strong>0.7206</strong>.</p>
+<h2>Reading the result honestly</h2>
+<p>Old code on today's corpus: 0.7206.
+Today's code on today's corpus: 0.7620.
+README's claim, on a corpus snapshot that no longer exists: 0.7891.</p>
+<p>There is no recoverable regression. Old code on the new corpus is <em>worse</em>, not better — it can't take advantage of the columns added by intervening migrations, and may even be confused by their presence. The 0.7891 number was real at commit time, against an artifact state that no longer exists.</p>
+<p>So the chain wasn't <code>0.7891 → regression → 0.7620</code>. It was three separate states being compared apples-to-oranges:</p>
+<pre><code>Commit 39f9b7c, on  corpus_state_A    →  0.7891
+Commit 39f9b7c, on  corpus_state_today → 0.7206  (the actual reproducibility)
+Commit HEAD, on    corpus_state_today  →  0.7620 (today's measurement)
+</code></pre>
+<p>The &quot;score-neutral&quot; annotation on phase-A wasn't false in spirit — the <em>code change</em> was indeed score-neutral. But the corpus state had drifted in the background, and the author measured against a different DB than <code>39f9b7c</code>'s author did. Neither was wrong. Both were correct. The comparison was wrong.</p>
+<p>This is the corpus drift trap. It's invisible in <code>git diff</code>. It's invisible in the test suite. It's invisible in code review. It only manifests when someone asks &quot;wait, where did the 0.027 go?&quot; and tries to bisect.</p>
+<h2>Why this matters beyond one Sanskrit engine</h2>
+<p>Every RAG pipeline I've audited has at least one of these mutating artifacts:</p>
+<ul>
+<li><strong>An embedding index</strong> rebuilt when chunking strategy changes. Different chunks → different embeddings → different cosine top-k → different downstream scores. Often invisible because the chunking script is in a separate repo.</li>
+<li><strong>A BM25 cache</strong> built once and never invalidated when tokenisation rules change.</li>
+<li><strong>A knowledge graph</strong> that gets enriched by background jobs. Same query against the same KG returns different neighbours next month.</li>
+<li><strong>Per-document priors</strong> — click-through rates, freshness scores, embedding-drift signals — that update on every query and silently change the ranker's behaviour.</li>
+</ul>
+<p>In every case, &quot;we ran the bench at commit X and got Y&quot; is a true statement that <em>cannot be reproduced later</em> because Y depends on artifacts that aren't in the commit. When someone three months later cites your nDCG, they're citing a number that was real for an hour.</p>
+<h2>The fix is small</h2>
+<p>Two pieces, totalling about 250 lines of Python.</p>
+<p><strong>Piece 1 — <code>corpus.lock.json</code>.</strong> A tool that walks every binary corpus artifact (<code>.db</code>, <code>.bin</code>, <code>.json</code>, <code>.pkl</code>), captures sha256 + size, alongside the current git commit and the verified bench score, and writes the lot to a JSON file you commit:</p>
+<pre><code class="language-json">{
+  &quot;version&quot;: 1,
+  &quot;generated_at&quot;: &quot;2026-05-01T01:37:46Z&quot;,
+  &quot;git&quot;: {&quot;commit&quot;: &quot;a5cd404&quot;, &quot;branch&quot;: &quot;phase1-fractal-upgrades&quot;, &quot;dirty&quot;: false},
+  &quot;artifacts&quot;: {
+    &quot;corpus/fractal_signatures.db&quot;: {&quot;sha256&quot;: &quot;04918ed4...&quot;, &quot;size_bytes&quot;: 90886144},
+    &quot;corpus/faiss_index.bin&quot;:       {&quot;sha256&quot;: &quot;2319f9cb...&quot;, &quot;size_bytes&quot;:  9690669},
+    ...
+  },
+  &quot;bench&quot;: {&quot;nDCG@5&quot;: 0.7873}
+}
+</code></pre>
+<p>A <code>--verify</code> mode reads the lock and exits non-zero on any sha256 drift, missing artifact, extra artifact, or git-commit drift. Future &quot;score-neutral&quot; claims become checkable: re-emit, diff, see exactly what changed.</p>
+<p><strong>Piece 2 — bench-side feedback suppression.</strong> The Vāk-Kaṇaja engine has a closed-loop H-update path: when retrieval seems off, it nudges the H values in the signatures DB to drift the next query toward better answers. Production-correct behaviour. But this means each bench run <em>mutates the corpus</em>, and the next bench reads a different state. The lock file would never stay green.</p>
+<p>The fix is one env var — <code>KANAJA_DISABLE_FEEDBACK=1</code> — that short-circuits the feedback path when set. The bench harness sets it via <code>os.environ.setdefault</code> at the top of the bench file. Production deployments leave it unset.</p>
+<p>After both pieces landed, two consecutive bench runs left the corpus byte-identical. The lock verified clean. The score was reproducible. (Bonus: the fix also surfaced two latent bugs in the feedback path — a closed-database error firing on every query and a <code>database is locked</code> race — which we patched the same afternoon.)</p>
+<h2>What this changes about how I read RAG papers</h2>
+<p>Every retrieval claim has an implicit attached question now: <em>what's the sha256 of the corpus you measured against, and how do I check it?</em> If the answer isn't in the paper, the score is unverifiable. Not wrong, just unverifiable. That's a different category from &quot;wrong&quot; — but it's also a different category from &quot;validated.&quot;</p>
+<p>It also changes how I read commit messages. &quot;Score-neutral&quot; only means &quot;I changed code that I expect doesn't move the score.&quot; It says nothing about whether the corpus the score was measured against has drifted since the previous commit. The two propositions are independent and both need to be checked.</p>
+<h2>The simplest version you can copy</h2>
+<p>If you want to steal the pattern for your own RAG repo, the minimal diff is:</p>
+<ol>
+<li>Write a tiny script that walks your corpus directory, hashes the binary files, dumps <code>corpus.lock.json</code>. ~80 lines.</li>
+<li>Add a <code>--verify</code> mode. ~40 lines.</li>
+<li>Find any code path that mutates corpus state during evaluation (feedback loops, click logging, freshness updates) and put it behind an env var that your bench sets. ~10 lines.</li>
+<li>Commit <code>corpus.lock.json</code>. Run <code>--verify</code> in CI. Reject any PR that drifts the lock without a corresponding intentional re-emit.</li>
+</ol>
+<p>Total cost: a couple of hours. Total benefit: every score claim in the repo becomes falsifiable, and you can finally answer &quot;did this PR regress the bench?&quot; without ambiguity.</p>
+<p>The full implementation lives in <a href="https://github.com/sparshsharma/vak_engine/blob/main/tools/lock_corpus_state.py">vak_engine/tools/lock_corpus_state.py</a> (Apache 2.0). Adapt freely.</p>
+<hr />
+<p><em>If you've debugged a similar drift in your own pipeline, I'd love to hear about it — <code>sparshsharma219@gmail.com</code>. I'm also taking on a small number of $5k fixed-price RAG audits where I find drift, dead code paths, and uncalibrated claims in production retrieval systems. If you're shipping retrieval and not sure your scores reproduce, [reach out].</em></p>
+
+</article>
+<footer>
+  <a href="/blog/">&larr; all posts</a> &nbsp;&middot;&nbsp; <a href="/">home</a> &nbsp;&middot;&nbsp; <a href="https://github.com/spalsh-spec/falsify-eval">repo</a>
+</footer>
+</main>
+</body>
+</html>

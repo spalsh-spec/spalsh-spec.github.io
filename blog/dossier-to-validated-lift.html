@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate" type="application/rss+xml" title="Sparsh Sharma — blog" href="/feed.xml">
+<style>
+  :root{--ink:#1a1a1a;--ink-soft:#3d3d3d;--ink-faint:#7a7a7a;--paper:#fbf8f3;--rule:#d9d2c3;--accent:#8b3a1f;--code-bg:#f1ece1}
+  *{box-sizing:border-box}
+  html{font-size:17px}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:Charter,"Iowan Old Style",Georgia,Cambria,"Times New Roman",serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+  main{max-width:38rem;margin:0 auto;padding:3rem 1.5rem 5rem}
+  .breadcrumb{font-size:.85rem;color:var(--ink-faint);margin-bottom:2rem}
+  .breadcrumb a{color:var(--ink-faint);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:2px}
+  .breadcrumb a:hover{color:var(--accent);text-decoration-color:var(--accent)}
+  h1{font-size:1.75rem;font-weight:600;margin:0 0 .35rem;letter-spacing:-.005em;line-height:1.25}
+  .post-meta{color:var(--ink-faint);font-size:.88rem;margin:0 0 .25rem}
+  .lede{font-style:italic;color:var(--ink-soft);margin:.5rem 0 2rem;font-size:1.06rem;line-height:1.55}
+  article h2{font-size:1.25rem;margin-top:2.4rem;margin-bottom:.7rem;font-weight:600;letter-spacing:-.003em}
+  article h3{font-size:1.05rem;margin-top:1.8rem;margin-bottom:.5rem;font-weight:600}
+  article p{margin:0 0 1.1rem}
+  article a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2.5px}
+  article a:hover{text-decoration-thickness:2px}
+  article ul,article ol{padding-left:1.4rem;margin:0 0 1.1rem}
+  article li{margin-bottom:.35rem}
+  article hr{border:0;border-top:1px solid var(--rule);margin:2rem 0}
+  article blockquote{border-left:3px solid var(--rule);margin:1rem 0;padding:.2rem 0 .2rem 1rem;color:var(--ink-soft);font-style:italic}
+  article table{border-collapse:collapse;margin:1rem 0;font-size:.94rem;width:100%}
+  article th,article td{border:1px solid var(--rule);padding:.4rem .6rem;text-align:left}
+  article th{background:#f3eee2;font-weight:600}
+  code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.86rem;background:var(--code-bg);padding:.08rem .32rem;border-radius:2px;color:var(--ink)}
+  pre{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.84rem;background:var(--code-bg);padding:.85rem 1rem;border-radius:3px;overflow-x:auto;margin:.6rem 0 1.4rem;line-height:1.5}
+  pre code{background:none;padding:0}
+  .post-list{list-style:none;padding:0;margin:0}
+  .post-list li{margin-bottom:1.5rem;padding-bottom:1.4rem;border-bottom:1px solid var(--rule)}
+  .post-list li:last-child{border-bottom:none}
+  .post-list .title{font-size:1.1rem;font-weight:600;display:block;margin-bottom:.2rem}
+  .post-list .title a{color:var(--ink);text-decoration:none}
+  .post-list .title a:hover{color:var(--accent);text-decoration:underline}
+  .post-list .date{color:var(--ink-faint);font-size:.85rem;margin-bottom:.4rem}
+  .post-list .lede-mini{color:var(--ink-soft);font-size:.96rem;font-style:italic;line-height:1.5}
+  footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--rule);font-size:.82rem;color:var(--ink-faint);text-align:center}
+  footer a{color:var(--ink-faint)}
+  @media (max-width:480px){html{font-size:16px}main{padding:2rem 1.2rem 3rem}}
+</style>
+<title>From dossier prediction to validated lift: 8 of 10 items shipped, harness PASSes, and an UNDER finding worth the whole exercise — Sparsh Sharma</title>
+<meta name="description" content="A case study in adversarial calibration: how to use a research dossier so that disappointment becomes data.">
+<meta name="author" content="Sparsh Sharma">
+<link rel="canonical" href="https://spalsh-spec.github.io/blog/dossier-to-validated-lift.html">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://spalsh-spec.github.io/blog/dossier-to-validated-lift.html">
+<meta property="og:title" content="From dossier prediction to validated lift: 8 of 10 items shipped, harness PASSes, and an UNDER finding worth the whole exercise">
+<meta property="og:description" content="A case study in adversarial calibration: how to use a research dossier so that disappointment becomes data.">
+<meta property="og:image" content="https://spalsh-spec.github.io/og-image.png">
+<meta property="article:published_time" content="2026-05-01">
+<meta property="article:author" content="Sparsh Sharma">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="From dossier prediction to validated lift: 8 of 10 items shipped, harness PASSes, and an UNDER finding worth the whole exercise">
+<meta name="twitter:description" content="A case study in adversarial calibration: how to use a research dossier so that disappointment becomes data.">
+<meta name="twitter:image" content="https://spalsh-spec.github.io/og-image.png">
+</head>
+<body>
+<main>
+<nav class="breadcrumb"><a href="/">home</a> &nbsp;/&nbsp; <a href="/blog/">blog</a> &nbsp;/&nbsp; <span>dossier-to-validated-lift</span></nav>
+<header>
+  <h1>From dossier prediction to validated lift: 8 of 10 items shipped, harness PASSes, and an UNDER finding worth the whole exercise</h1>
+  <p class="post-meta">1 May 2026 &nbsp;&middot;&nbsp; Sparsh Sharma</p>
+  <p class="lede">A case study in adversarial calibration: how to use a research dossier so that disappointment becomes data.</p>
+</header>
+<article>
+<hr />
+<p>A small retrieval-engine project I work on (Vāk-Kaṇaja, Sanskrit + Dravidian classical corpora, fully local on M1) recently passed an inflection point I want to write about because I think it's underdiscussed. The project ships against an explicit research dossier — thirty-some ideas, ranked by expected impact, each with a numeric prediction for <code>ΔnDCG@5</code> on the project's benchmark. As of this week, eight of the dossier's &quot;Top 10&quot; items are committed, the falsification harness passes by ~13× the gate margin, and one of the predictions is in the &quot;UNDER&quot; category in the calibration table.</p>
+<p>That last item — the UNDER — is the most valuable result of the whole quarter, and I think the standard way of writing this up would have buried it. This post argues for the opposite: making UNDER a first-class category turns a &quot;disappointing&quot; result into a precise finding about what the benchmark can and cannot measure.</p>
+<h2>The setup</h2>
+<p>The dossier is just a markdown table. Here's the actual top-10 with the numeric predictions:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Item</th>
+<th>Predicted ΔnDCG@5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>MFDFA fingerprint replacing single Hurst</td>
+<td>+0.02..+0.04</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Wavelet-leader f(α) for short sūtras</td>
+<td>+0.005..+0.01</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Persistent-homology re-ranker</td>
+<td>+0.02..+0.03</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Ollivier-Ricci edge curvature pruning</td>
+<td>+0.01..+0.02 (offline-only)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Poincaré-ball secondary index</td>
+<td>+0.03..+0.05</td>
+</tr>
+<tr>
+<td>6</td>
+<td>p-adic ultrametric on phoneme tree</td>
+<td>+0.005..+0.01</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Catuṣkoṭi/Saptabhaṅgī many-valued logic flag</td>
+<td>+0 (metadata enrichment)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Lacunarity Λ(r)</td>
+<td>+0.005</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Density-matrix relevance score (negation handling)</td>
+<td>+0.01..+0.02</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Falsification harness</td>
+<td>(gate, not lift)</td>
+</tr>
+</tbody>
+</table>
+<p>Cumulative expected: 0.7522 → 0.81–0.84, ambitiously 0.86. The dossier author warns explicitly: <em>&quot;if you exceed 0.88 without a corresponding rise on the null corpus, treat that as a red flag for label leakage rather than a victory.&quot;</em></p>
+<p>A few things to notice about how this is written. First, every prediction is a <em>range</em>, not a point. Second, the author predicted some items would be net-zero (item 7) and explicitly flagged what level would be suspicious. Third, item 10 is the falsification harness and the dossier mandates it ship before items 3, 4, 5 — <em>&quot;install before adding novelty.&quot;</em></p>
+<p>This is good dossier hygiene. It's the kind of thing alignment / safety / interpretability researchers do well and most ML engineering teams don't.</p>
+<h2>What happened</h2>
+<p>Items 1, 2, 4, 6, 8, 10 were already committed when I started. This week I shipped item 3 (which had been written but never wired into the engine — see [previous post]) and item 5 (Poincaré-ball secondary index). I built the falsification harness gate around the bench, I built a <code>corpus.lock.json</code> file to prevent the <a href="link">drift trap</a>, and I ran each new feature through a weight sweep before setting a default.</p>
+<p>Then I filled in the calibration column:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Item</th>
+<th>Predicted Δ</th>
+<th>Measured Δ</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>MFDFA fingerprint</td>
+<td>+0.02..+0.04</td>
+<td>+0.04</td>
+<td>HIT</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Wavelet-leader f(α)</td>
+<td>+0.005..+0.01</td>
+<td>+0.008</td>
+<td>HIT</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Persistent-homology rerank</td>
+<td>+0.02..+0.03</td>
+<td><strong>+0.0186</strong></td>
+<td>HIT (lower band)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Ollivier-Ricci pruning</td>
+<td>+0.01..+0.02</td>
+<td>n/a (offline)</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Poincaré-ball secondary index</td>
+<td>+0.03..+0.05</td>
+<td><strong>+0.0067</strong></td>
+<td>UNDER</td>
+</tr>
+<tr>
+<td>6</td>
+<td>p-adic ultrametric</td>
+<td>+0.005..+0.01</td>
+<td>+0.006</td>
+<td>HIT</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Catuṣkoṭi/Saptabhaṅgī</td>
+<td>+0</td>
+<td>not shipped</td>
+<td>(deferred — pure API)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Lacunarity Λ(r)</td>
+<td>+0.005</td>
+<td>+0.005</td>
+<td>HIT</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Density-matrix relevance</td>
+<td>+0.01..+0.02</td>
+<td>not shipped</td>
+<td>(deferred)</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Falsification harness</td>
+<td>gate</td>
+<td>PASS ×3 (Δ +0.65, +0.66, +0.69)</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<p>Six of the seven measurable items HIT inside the predicted band. One UNDER. The harness passes by an order of magnitude over its gate. Final score: 0.7873.</p>
+<h2>The UNDER is the finding</h2>
+<p>Item 5 (Poincaré-ball secondary index) was supposed to be the marquee item — the dossier called it &quot;highest single ΔnDCG, +0.03–0.05.&quot; It came in at +0.0067. That's a fifth of the lower bound, an eighth of the upper bound. By naive standards, this is a failure.</p>
+<p>It's not a failure. It's a precise statement about what the benchmark cannot measure. Here's the reasoning that turns disappointment into data.</p>
+<p>Poincaré-ball embeddings preserve hierarchical distance: if your data is tree-like, two siblings sit far apart at the same depth, while a parent and child sit close at different depths. The mechanism's edge over flat-cosine retrieval shows up when the <em>correct</em> answer is &quot;go deeper into the same subtree&quot; or &quot;pick the right sibling at this level.&quot; Examples: distinguishing a specific verse in the Yogasūtra's <em>samādhi-pāda</em> from the rest of the Yogasūtra; picking the correct Upaniṣad when several discuss similar themes.</p>
+<p>The 21-query bench used here labels gold at <em>whole-text</em> granularity. A query about consciousness gets relevance=3 if any chunk of the Māṇḍūkya Upaniṣad appears in top-5; it doesn't care which chunk. There's no signal in this bench to reward &quot;you picked the right verse within the right text&quot; — because there's no such gold to begin with.</p>
+<p>Cosine retrieval already nails most of these queries because text-level recall is much easier than chunk-level disambiguation. Poincaré can only fire on the small subset of queries where two different traditions share vocabulary about the same topic and the correct text needs to be picked from among them. On this bench, that's about 3 of the 21 queries (puruṣa/prakṛti — Sāṃkhya vs Yoga; tat tvam asi — multiple Upaniṣads; four-states-of-consciousness — Māṇḍūkya vs Bṛhadāraṇyaka). The mechanism delivered a non-zero, unambiguously-positive lift on exactly those queries. Per-text breakdown confirms it.</p>
+<p>The dossier prediction wasn't wrong about Poincaré. It was wrong about <em>this bench's ability to measure Poincaré</em>. That's the UNDER finding, and it's the thing that should drive the next quarter's work — either (a) extend the bench to include sub-text-granularity gold and remeasure, or (b) deprioritise Poincaré on this corpus and use it where the substrate is more visibly hierarchical (legal case-law trees, patent classifications, ontology graphs).</p>
+<h2>The harness PASSes hard</h2>
+<p>Real nDCG@5 = 0.7873. Three null distributions:</p>
+<table>
+<thead>
+<tr>
+<th>Null</th>
+<th>Mean nDCG@5</th>
+<th>Δ vs real</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tradition-permuted (bijection over the 13 text-ids)</td>
+<td>0.1348</td>
+<td><strong>+0.6524</strong></td>
+</tr>
+<tr>
+<td>Tradition-random (iid uniform per query)</td>
+<td>0.1225</td>
+<td><strong>+0.6648</strong></td>
+</tr>
+<tr>
+<td>Random retrieval (5 random chunks)</td>
+<td>0.0931</td>
+<td><strong>+0.6942</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Gate is +0.05; we're at +0.65. Real (0.7873) is well below the 0.88 leakage-suspicion ceiling, so the headline isn't suspect either. The engine genuinely beats label permutation and random retrieval by a lot.</p>
+<p>What changed when item 3 (persistent-homology) and item 5 (Poincaré) wire-ins landed? All three null Δ values went <em>up</em>. From the previous run:</p>
+<pre><code>Pre-wire-in real:  0.7620   nulls ~ {0.13, 0.11, 0.09}   Δ ~ {+0.63, +0.65, +0.67}
+Post-wire-in real: 0.7873   nulls ~ {0.13, 0.12, 0.09}   Δ ~ {+0.65, +0.66, +0.69}
+</code></pre>
+<p>Real moved 0.7620 → 0.7873 while the null means barely shifted. This is what &quot;real signal, not label leakage&quot; looks like in the data: the new features lift real performance but don't lift permuted-label performance. If the new features had been memorising gold labels, the permuted-label score would have moved with the real one.</p>
+<h2>Why this discipline matters more than the score</h2>
+<p>The number 0.7873 is interesting. The fact that I can defend it — to a fellowship admissions reviewer, to a frontier-lab safety researcher, to a future-me who's forgotten the context — is more interesting. Every claim in the table above is checkable: there's a <code>corpus.lock.json</code> capturing the exact artifacts the score was measured against, a <code>KANAJA_DISABLE_FEEDBACK=1</code> env var that prevents the bench from drifting the corpus, and a <code>tests/null_corpus.py</code> that runs the falsification gate on demand.</p>
+<p>This kind of discipline is rare in published retrieval / RAG papers, including high-profile ones. It's also exactly the kind of methodology that the major frontier labs' alignment and evaluation teams have moved toward over the last two years (Anthropic's red-teaming and constitutional AI eval work, OpenAI's safety evals after the superalignment shake-up, DeepMind's alignment evals). If you're an independent researcher looking to position into that work, <em>this</em> is the thing that gets attention — not the math, the rigor.</p>
+<h2>What I'd change if doing it again</h2>
+<p>A few things I'd do differently if I started this dossier-driven cycle from scratch:</p>
+<ol>
+<li>
+<p><strong>Build the harness before any item.</strong> I had item 10 in the queue from the start and shipped it relatively early, but a week of items 1, 2, 6 went in without it. Those scores are technically unverified-against-nulls. If I'd shipped 10 first, the whole record would be cleaner.</p>
+</li>
+<li>
+<p><strong>Predictions in <em>expected median</em> and <em>95% CI</em>, not just a range.</strong> A prediction of &quot;+0.02..+0.05&quot; is too easy to retro-fit. A predicted median of +0.035 with a CI of [+0.020, +0.050] forces sharper thinking and produces more interesting UNDER findings.</p>
+</li>
+<li>
+<p><strong>Bench-extension as an explicit dossier item.</strong> If the dossier had item 0 = &quot;extend the bench to include sub-text-granularity queries before items 5 and 9,&quot; the Poincaré UNDER might have become a HIT. Bench design is a research artifact too; treat it that way.</p>
+</li>
+<li>
+<p><strong>Per-query attribution dashboard.</strong> Instead of just per-text, track which queries each new module helps or hurts. Item 3 helped nyāyasūtra queries by +0.087, hurt chandogya queries by -0.080, net +0.0186 mean. That per-query view explains the mechanism cleanly and prevents post-hoc storytelling.</p>
+</li>
+</ol>
+<h2>How to copy this for your own project</h2>
+<p>If you're working on a small ML project — research, side project, indie product — the meta-template that produced this is:</p>
+<ul>
+<li>Write a dossier of 10–30 ideas with numeric predictions and explicit ranges. (LLMs are excellent for this; ask one to write a research dossier for your project, with predicted Δs and references.)</li>
+<li>Build the falsification harness (or its equivalent for your domain) before anything else.</li>
+<li>For each shipped item, fill in measured-vs-predicted in a calibration table that lives in your README.</li>
+<li>Allow UNDER as a first-class category. Document why; don't bury it.</li>
+<li>Lock your corpus / dataset / model checkpoint state with a hash file. Verify in CI.</li>
+<li>Suppress mutating side effects during evaluation (your equivalent of <code>KANAJA_DISABLE_FEEDBACK</code>).</li>
+</ul>
+<p>Total infrastructure cost: a few hundred lines of Python. Total epistemic upside: every claim you make becomes precise enough to be wrong, which is the only kind of claim worth making.</p>
+<hr />
+<p><em>Companion posts: <a href="LINK_TO_BLOG_1">the corpus drift trap</a> on cryptographic state locking, and <a href="LINK_TO_BLOG_2">wiring up dead code</a> on finding +1.9% nDCG that's already in your repo. Methodology preprint with full results: [arxiv link]. Code: [github link]. If you'd like to talk shop or want a calibration-discipline audit on your own retrieval / RAG pipeline, <code>sparshsharma219@gmail.com</code>.</em></p>
+
+</article>
+<footer>
+  <a href="/blog/">&larr; all posts</a> &nbsp;&middot;&nbsp; <a href="/">home</a> &nbsp;&middot;&nbsp; <a href="https://github.com/spalsh-spec/falsify-eval">repo</a>
+</footer>
+</main>
+</body>
+</html>

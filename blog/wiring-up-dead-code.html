@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate" type="application/rss+xml" title="Sparsh Sharma — blog" href="/feed.xml">
+<style>
+  :root{--ink:#1a1a1a;--ink-soft:#3d3d3d;--ink-faint:#7a7a7a;--paper:#fbf8f3;--rule:#d9d2c3;--accent:#8b3a1f;--code-bg:#f1ece1}
+  *{box-sizing:border-box}
+  html{font-size:17px}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:Charter,"Iowan Old Style",Georgia,Cambria,"Times New Roman",serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+  main{max-width:38rem;margin:0 auto;padding:3rem 1.5rem 5rem}
+  .breadcrumb{font-size:.85rem;color:var(--ink-faint);margin-bottom:2rem}
+  .breadcrumb a{color:var(--ink-faint);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:2px}
+  .breadcrumb a:hover{color:var(--accent);text-decoration-color:var(--accent)}
+  h1{font-size:1.75rem;font-weight:600;margin:0 0 .35rem;letter-spacing:-.005em;line-height:1.25}
+  .post-meta{color:var(--ink-faint);font-size:.88rem;margin:0 0 .25rem}
+  .lede{font-style:italic;color:var(--ink-soft);margin:.5rem 0 2rem;font-size:1.06rem;line-height:1.55}
+  article h2{font-size:1.25rem;margin-top:2.4rem;margin-bottom:.7rem;font-weight:600;letter-spacing:-.003em}
+  article h3{font-size:1.05rem;margin-top:1.8rem;margin-bottom:.5rem;font-weight:600}
+  article p{margin:0 0 1.1rem}
+  article a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2.5px}
+  article a:hover{text-decoration-thickness:2px}
+  article ul,article ol{padding-left:1.4rem;margin:0 0 1.1rem}
+  article li{margin-bottom:.35rem}
+  article hr{border:0;border-top:1px solid var(--rule);margin:2rem 0}
+  article blockquote{border-left:3px solid var(--rule);margin:1rem 0;padding:.2rem 0 .2rem 1rem;color:var(--ink-soft);font-style:italic}
+  article table{border-collapse:collapse;margin:1rem 0;font-size:.94rem;width:100%}
+  article th,article td{border:1px solid var(--rule);padding:.4rem .6rem;text-align:left}
+  article th{background:#f3eee2;font-weight:600}
+  code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.86rem;background:var(--code-bg);padding:.08rem .32rem;border-radius:2px;color:var(--ink)}
+  pre{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.84rem;background:var(--code-bg);padding:.85rem 1rem;border-radius:3px;overflow-x:auto;margin:.6rem 0 1.4rem;line-height:1.5}
+  pre code{background:none;padding:0}
+  .post-list{list-style:none;padding:0;margin:0}
+  .post-list li{margin-bottom:1.5rem;padding-bottom:1.4rem;border-bottom:1px solid var(--rule)}
+  .post-list li:last-child{border-bottom:none}
+  .post-list .title{font-size:1.1rem;font-weight:600;display:block;margin-bottom:.2rem}
+  .post-list .title a{color:var(--ink);text-decoration:none}
+  .post-list .title a:hover{color:var(--accent);text-decoration:underline}
+  .post-list .date{color:var(--ink-faint);font-size:.85rem;margin-bottom:.4rem}
+  .post-list .lede-mini{color:var(--ink-soft);font-size:.96rem;font-style:italic;line-height:1.5}
+  footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--rule);font-size:.82rem;color:var(--ink-faint);text-align:center}
+  footer a{color:var(--ink-faint)}
+  @media (max-width:480px){html{font-size:16px}main{padding:2rem 1.2rem 3rem}}
+</style>
+<title>Wiring up dead code: how I found +1.9% nDCG sitting unused in my own repo — Sparsh Sharma</title>
+<meta name="description" content="Most production RAG pipelines have features that were &quot;shipped&quot; months ago and are silently doing nothing. Here&#x27;s how to find yours.">
+<meta name="author" content="Sparsh Sharma">
+<link rel="canonical" href="https://spalsh-spec.github.io/blog/wiring-up-dead-code.html">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://spalsh-spec.github.io/blog/wiring-up-dead-code.html">
+<meta property="og:title" content="Wiring up dead code: how I found +1.9% nDCG sitting unused in my own repo">
+<meta property="og:description" content="Most production RAG pipelines have features that were &quot;shipped&quot; months ago and are silently doing nothing. Here&#x27;s how to find yours.">
+<meta property="og:image" content="https://spalsh-spec.github.io/og-image.png">
+<meta property="article:published_time" content="2026-05-01">
+<meta property="article:author" content="Sparsh Sharma">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Wiring up dead code: how I found +1.9% nDCG sitting unused in my own repo">
+<meta name="twitter:description" content="Most production RAG pipelines have features that were &quot;shipped&quot; months ago and are silently doing nothing. Here&#x27;s how to find yours.">
+<meta name="twitter:image" content="https://spalsh-spec.github.io/og-image.png">
+</head>
+<body>
+<main>
+<nav class="breadcrumb"><a href="/">home</a> &nbsp;/&nbsp; <a href="/blog/">blog</a> &nbsp;/&nbsp; <span>wiring-up-dead-code</span></nav>
+<header>
+  <h1>Wiring up dead code: how I found +1.9% nDCG sitting unused in my own repo</h1>
+  <p class="post-meta">1 May 2026 &nbsp;&middot;&nbsp; Sparsh Sharma</p>
+  <p class="lede">Most production RAG pipelines have features that were &quot;shipped&quot; months ago and are silently doing nothing. Here&#x27;s how to find yours.</p>
+</header>
+<article>
+<hr />
+<p>A few weeks ago, a previous version of me — same engineer, different mood — committed this with a clean message:</p>
+<pre><code>phase1 step3: persistent-homology re-ranker (dossier §2.2 #3)
+</code></pre>
+<p>The commit added a 314-line module, <code>retrieval/topo_rerank.py</code>, with rigorous docstring, ripser/persim dependencies installed cleanly, and a small unit-test suite that passed. The module's design had been sketched in the research dossier, validated in isolation, and merged. By every visible signal — green tests, passing lint, sensible commit message — the feature was shipped.</p>
+<p>Today I noticed something. The bench score hadn't moved on that commit. Not by 0.001. The dossier had predicted +0.02–0.03 nDCG@5 from this re-ranker; the reality was zero.</p>
+<p>Spoiler: the function existed but was never called from anything except its own tests. Wiring it in took 17 lines. The score went from 0.7686 to 0.7873. <strong>One commit, +0.0186 nDCG, ~3% relative lift, recovered with no algorithmic change at all.</strong></p>
+<p>This pattern is common enough that I'd bet you have a version of it in your own RAG pipeline right now. Here's how to find it.</p>
+<h2>The two-minute audit</h2>
+<p>Pick any feature in your retrieval system that you think is &quot;shipped.&quot; Run this:</p>
+<pre><code class="language-bash">grep -rn &quot;from .* import &lt;feature_name&gt;\|import .*&lt;feature_name&gt;&quot; \
+    --include=&quot;*.py&quot; .
+</code></pre>
+<p>Now subtract any matches that come from <code>tests/</code> or from the module itself. What's left is the set of production-code call sites for that feature. If that set is empty, you're not using it.</p>
+<p>For me, the result was:</p>
+<pre><code>$ grep -rn &quot;topo_rerank\|from retrieval.topo&quot; --include=&quot;*.py&quot; .
+./retrieval/topo_rerank.py:1:&quot;&quot;&quot;...&quot;&quot;&quot;
+./retrieval/topo_rerank.py:180:def topo_rerank(...
+./tests/unit/test_topo_rerank.py: ... (the only callers)
+</code></pre>
+<p>Three matches in the source file (defining itself), one in the test file. <strong>Zero in the engine entry point.</strong> That's a feature that exists exclusively for the satisfaction of its tests.</p>
+<h2>How this happens</h2>
+<p>It's not negligence. It's a specific dynamic that produces this outcome over and over:</p>
+<ol>
+<li><strong>Research and integration are scoped separately.</strong> The dossier said &quot;ship the formalism + tests first, integrate after.&quot; That's a sensible engineering norm. But the integration ticket gets deprioritised by the next exciting research item, and the original integration intent fades from memory.</li>
+<li><strong>The commit message lies cleanly.</strong> &quot;Persistent-homology re-ranker&quot; sounds done. The diff shows the function. The tests pass. Reviewers approve. Nothing in the surface signal indicates the function is dead.</li>
+<li><strong>Score regression tests don't catch dead code.</strong> If you ship a feature wired to weight=0 by default, the bench score doesn't move. If you ship a feature <em>not wired in at all</em>, the bench score also doesn't move. From the bench's perspective, these are indistinguishable.</li>
+</ol>
+<p>This last one is critical. The most common way teams catch missing integration is &quot;the score got worse after the wire-in PR&quot; — but that only fires once you actually attempt the wire-in. Dead code that no one tries to wire in stays dead forever.</p>
+<h2>The systematic fix</h2>
+<p>For any retrieval pipeline of nontrivial size, I now do this once a quarter and once whenever I'm new to a codebase:</p>
+<p><strong>Step 1 — Inventory the rerankers.</strong> List every function whose docstring or name implies it modifies the retrieval ranking. Don't trust the directory structure or the commit messages. Read.</p>
+<p><strong>Step 2 — Trace each one to a call site outside its own tests.</strong> Use the grep above. Anything without a production call site is either dead code or scaffolding awaiting integration.</p>
+<p><strong>Step 3 — Distinguish the two cases.</strong> If it's scaffolding awaiting integration, wire it in (with a default weight of 0 if you want zero behaviour change), then sweep its weight to find the peak. If it's dead code with no plausible value, delete it — keeping it costs you cognitive load on every future grep.</p>
+<p><strong>Step 4 — For each newly wired feature, run the falsification harness.</strong> Make sure it's not adding label leakage. (If you don't have a falsification harness, that's a separate post.)</p>
+<p>The whole audit took me about 90 minutes per pipeline.</p>
+<h2>The wire-in itself</h2>
+<p>In case it helps, here's exactly what the integration looked like for the persistent-homology reranker. The pre-existing function took:</p>
+<pre><code class="language-python">topo_rerank(
+    query_embedding: np.ndarray,            # (D,) query vector
+    candidate_embeddings: np.ndarray,       # (K, D) top-K from prior stage
+    candidate_ids: Iterable,
+    *,
+    score_mode: str = &quot;image_l2&quot;,
+    top_k: Optional[int] = None,
+) -&gt; list[tuple[object, float, dict]]
+</code></pre>
+<p>Its own docstring warned: <em>&quot;Scores are unitless. To fuse with the existing ranker, normalise (z-score or rank-transform) both scores then combine with a weight.&quot;</em> So the wrapper rank-transforms then adds:</p>
+<pre><code class="language-python">def topo_persistence_rerank(
+    reranked,
+    query_embedding,
+    embedding_lookup,
+    topo_weight=None,
+    top_k=50,
+):
+    if topo_weight is None:
+        topo_weight = CHANNEL_WEIGHTS[&quot;topo&quot;]   # read at CALL time, not def time
+    if topo_weight == 0.0 or len(reranked) &lt; 3:
+        return reranked
+
+    # Pull (K, D) embeddings for the top-K candidates from the engine's FAISS
+    head = reranked[:top_k]
+    embs, valid_ids = [], []
+    for cid, _, _ in head:
+        emb = embedding_lookup(cid)
+        if emb is not None:
+            embs.append(emb); valid_ids.append(cid)
+    if len(embs) &lt; 3:
+        return reranked
+
+    topo_results = topo_rerank(query_embedding, np.array(embs), valid_ids)
+
+    # Rank-transform to [0, 1] so weight competes on the same scale as RRF.
+    raw = {cid: float(s) for cid, s, _ in topo_results}
+    sorted_cids = sorted(raw, key=lambda c: raw[c])
+    n = max(len(sorted_cids) - 1, 1)
+    rank_norm = {cid: i / n for i, cid in enumerate(sorted_cids)}
+
+    out = []
+    for cid, score, stats in head:
+        boost = topo_weight * rank_norm.get(cid, 0.5)
+        out.append((cid, score + boost, {**stats, &quot;topo_rank&quot;: rank_norm.get(cid)}))
+    out.sort(key=lambda t: t[1], reverse=True)
+    return out + reranked[top_k:]
+</code></pre>
+<p>Plus the one-line call site in the engine:</p>
+<pre><code class="language-python">reranked = topo_persistence_rerank(reranked, enc[&quot;full_emb&quot;], _embed_lookup)
+</code></pre>
+<p>Total: 50ish lines of wrapper, 1 call site, 1 line for the channel weight default. Zero algorithmic novelty. Module already existed. Tests already passed.</p>
+<h2>The two traps inside the wire-in</h2>
+<p>If you do this exercise, watch for these:</p>
+<p><strong>Trap 1: closure-capture on the weight default.</strong> Tempting to write:</p>
+<pre><code class="language-python">def topo_persistence_rerank(reranked, ..., topo_weight=CHANNEL_WEIGHTS[&quot;topo&quot;]): ...
+</code></pre>
+<p>This binds <code>topo_weight</code> to whatever <code>CHANNEL_WEIGHTS[&quot;topo&quot;]</code> was at <em>function-definition time</em>. When you later monkey-patch the global to sweep weights, the default doesn't update. Your sweep silently runs at the original weight every time. (I caught this on the first sweep — it produced six identical rows.) Use <code>topo_weight=None</code> and read the global on the first line of the function body.</p>
+<p><strong>Trap 2: scale mismatch.</strong> Re-ranker scores from different mechanisms have different natural scales. RRF scores in my pipeline live in roughly [0.001, 0.02] — gaps between consecutive ranks are around 0.001. If you blindly add <code>weight × raw_score</code> where <code>raw_score</code> happens to be in [0, 1], even a tiny weight (0.05) produces a perturbation 30× larger than the RRF gap, completely overwriting the existing ranking. The result is unimodal: a sharp peak at one specific small weight, with a knee just past it where the score crashes. My sweep showed:</p>
+<pre><code>w        nDCG@5    Δ
+0.0000   0.7686    baseline
+0.0005   0.7686    +0.0000  (perturbation below RRF gap)
+0.0010   0.7873    +0.0186  ← peak
+0.0020   0.7853    +0.0166
+0.0050   0.7236    -0.0450  (over the knee)
+0.0100   0.5712    -0.1974  (chaos)
+</code></pre>
+<p>Always rank-transform or z-score the new feature before combining, and always sweep on a logarithmic ladder that includes weights smaller than your RRF gap.</p>
+<h2>The meta-lesson</h2>
+<p>The biggest available wins in a retrieval pipeline are usually not new algorithms. They are dormant features waiting for someone to wire them in correctly. This is true partly because of the integration-vs-research split above, partly because the kind of person who writes a clever rerank module is often not the kind of person who patches the engine to call it, and partly because the bench tells you nothing when integration is missing.</p>
+<p>I'm now constitutionally suspicious of any retrieval repo where the rerankers are in a <code>retrieval/</code> directory and I can't immediately see them being called from the engine entry point. If they're not called, they're either decoration or pending work. Either way, treat them as a TODO.</p>
+<hr />
+<p><em>This was the second of three blog posts on what I learnt rebuilding the verification surface of a small Sanskrit retrieval engine. The first was on <a href="LINK_TO_BLOG_1">corpus drift</a>. The third (forthcoming) is on calibrating predicted-vs-measured Δ on a research dossier so failures become findings, not embarrassments.</em></p>
+<p><em>If you'd like a fixed-price audit of your retrieval pipeline — dead code, drift, uncalibrated claims, and a written report — I'm taking 2 per month at $5k. Email <code>sparshsharma219@gmail.com</code>.</em></p>
+
+</article>
+<footer>
+  <a href="/blog/">&larr; all posts</a> &nbsp;&middot;&nbsp; <a href="/">home</a> &nbsp;&middot;&nbsp; <a href="https://github.com/spalsh-spec/falsify-eval">repo</a>
+</footer>
+</main>
+</body>
+</html>

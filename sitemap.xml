@@ -6,4 +6,28 @@
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>https://spalsh-spec.github.io/blog/</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://spalsh-spec.github.io/blog/dossier-to-validated-lift.html</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://spalsh-spec.github.io/blog/corpus-drift-trap.html</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://spalsh-spec.github.io/blog/wiring-up-dead-code.html</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>

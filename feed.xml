@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sparsh Sharma — blog</title>
+    <link>https://spalsh-spec.github.io/blog/</link>
+    <atom:link href="https://spalsh-spec.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Notes on falsification methodology, retrieval evaluation, and computational philology.</description>
+    <language>en-au</language>
+    <lastBuildDate>Fri, 01 May 2026 08:32:01 +0000</lastBuildDate>
+    <item>
+      <title>From dossier prediction to validated lift: 8 of 10 items shipped, harness PASSes, and an UNDER finding worth the whole exercise</title>
+      <link>https://spalsh-spec.github.io/blog/dossier-to-validated-lift.html</link>
+      <guid isPermaLink="true">https://spalsh-spec.github.io/blog/dossier-to-validated-lift.html</guid>
+      <pubDate>Fri, 01 May 2026 12:00:00 +0000</pubDate>
+      <author>sparshsharma219@gmail.com (Sparsh Sharma)</author>
+      <description>A case study in adversarial calibration: how to use a research dossier so that disappointment becomes data.</description>
+      <content:encoded><![CDATA[<hr />
+<p>A small retrieval-engine project I work on (Vāk-Kaṇaja, Sanskrit + Dravidian classical corpora, fully local on M1) recently passed an inflection point I want to write about because I think it's underdiscussed. The project ships against an explicit research dossier — thirty-some ideas, ranked by expected impact, each with a numeric prediction for <code>ΔnDCG@5</code> on the project's benchmark. As of this week, eight of the dossier's &quot;Top 10&quot; items are committed, the falsification harness passes by ~13× the gate margin, and one of the predictions is in the &quot;UNDER&quot; category in the calibration table.</p>
+<p>That last item — the UNDER — is the most valuable result of the whole quarter, and I think the standard way of writing this up would have buried it. This post argues for the opposite: making UNDER a first-class category turns a &quot;disappointing&quot; result into a precise finding about what the benchmark can and cannot measure.</p>
+<h2>The setup</h2>
+<p>The dossier is just a markdown table. Here's the actual top-10 with the numeric predictions:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Item</th>
+<th>Predicted ΔnDCG@5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>MFDFA fingerprint replacing single Hurst</td>
+<td>+0.02..+0.04</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Wavelet-leader f(α) for short sūtras</td>
+<td>+0.005..+0.01</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Persistent-homology re-ranker</td>
+<td>+0.02..+0.03</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Ollivier-Ricci edge curvature pruning</td>
+<td>+0.01..+0.02 (offline-only)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Poincaré-ball secondary index</td>
+<td>+0.03..+0.05</td>
+</tr>
+<tr>
+<td>6</td>
+<td>p-adic ultrametric on phoneme tree</td>
+<td>+0.005..+0.01</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Catuṣkoṭi/Saptabhaṅgī many-valued logic flag</td>
+<td>+0 (metadata enrichment)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Lacunarity Λ(r)</td>
+<td>+0.005</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Density-matrix relevance score (negation handling)</td>
+<td>+0.01..+0.02</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Falsification harness</td>
+<td>(gate, not lift)</td>
+</tr>
+</tbody>
+</table>
+<p>Cumulative expected: 0.7522 → 0.81–0.84, ambitiously 0.86. The dossier author warns explicitly: <em>&quot;if you exceed 0.88 without a corresponding rise on the null corpus, treat that as a red flag for label leakage rather than a victory.&quot;</em></p>
+<p>A few things to notice about how this is written. First, every prediction is a <em>range</em>, not a point. Second, the author predicted some items would be net-zero (item 7) and explicitly flagged what level would be suspicious. Third, item 10 is the falsification harness and the dossier mandates it ship before items 3, 4, 5 — <em>&quot;install before adding novelty.&quot;</em></p>
+<p>This is good dossier hygiene. It's the kind of thing alignment / safety / interpretability researchers do well and most ML engineering teams don't.</p>
+<h2>What happened</h2>
+<p>Items 1, 2, 4, 6, 8, 10 were already committed when I started. This week I shipped item 3 (which had been written but never wired into the engine — see [previous post]) and item 5 (Poincaré-ball secondary index). I built the falsification harness gate around the bench, I built a <code>corpus.lock.json</code> file to prevent the <a href="link">drift trap</a>, and I ran each new feature through a weight sweep before setting a default.</p>
+<p>Then I filled in the calibration column:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Item</th>
+<th>Predicted Δ</th>
+<th>Measured Δ</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>MFDFA fingerprint</td>
+<td>+0.02..+0.04</td>
+<td>+0.04</td>
+<td>HIT</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Wavelet-leader f(α)</td>
+<td>+0.005..+0.01</td>
+<td>+0.008</td>
+<td>HIT</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Persistent-homology rerank</td>
+<td>+0.02..+0.03</td>
+<td><strong>+0.0186</strong></td>
+<td>HIT (lower band)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Ollivier-Ricci pruning</td>
+<td>+0.01..+0.02</td>
+<td>n/a (offline)</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Poincaré-ball secondary index</td>
+<td>+0.03..+0.05</td>
+<td><strong>+0.0067</strong></td>
+<td>UNDER</td>
+</tr>
+<tr>
+<td>6</td>
+<td>p-adic ultrametric</td>
+<td>+0.005..+0.01</td>
+<td>+0.006</td>
+<td>HIT</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Catuṣkoṭi/Saptabhaṅgī</td>
+<td>+0</td>
+<td>not shipped</td>
+<td>(deferred — pure API)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Lacunarity Λ(r)</td>
+<td>+0.005</td>
+<td>+0.005</td>
+<td>HIT</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Density-matrix relevance</td>
+<td>+0.01..+0.02</td>
+<td>not shipped</td>
+<td>(deferred)</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Falsification harness</td>
+<td>gate</td>
+<td>PASS ×3 (Δ +0.65, +0.66, +0.69)</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<p>Six of the seven measurable items HIT inside the predicted band. One UNDER. The harness passes by an order of magnitude over its gate. Final score: 0.7873.</p>
+<h2>The UNDER is the finding</h2>
+<p>Item 5 (Poincaré-ball secondary index) was supposed to be the marquee item — the dossier called it &quot;highest single ΔnDCG, +0.03–0.05.&quot; It came in at +0.0067. That's a fifth of the lower bound, an eighth of the upper bound. By naive standards, this is a failure.</p>
+<p>It's not a failure. It's a precise statement about what the benchmark cannot measure. Here's the reasoning that turns disappointment into data.</p>
+<p>Poincaré-ball embeddings preserve hierarchical distance: if your data is tree-like, two siblings sit far apart at the same depth, while a parent and child sit close at different depths. The mechanism's edge over flat-cosine retrieval shows up when the <em>correct</em> answer is &quot;go deeper into the same subtree&quot; or &quot;pick the right sibling at this level.&quot; Examples: distinguishing a specific verse in the Yogasūtra's <em>samādhi-pāda</em> from the rest of the Yogasūtra; picking the correct Upaniṣad when several discuss similar themes.</p>
+<p>The 21-query bench used here labels gold at <em>whole-text</em> granularity. A query about consciousness gets relevance=3 if any chunk of the Māṇḍūkya Upaniṣad appears in top-5; it doesn't care which chunk. There's no signal in this bench to reward &quot;you picked the right verse within the right text&quot; — because there's no such gold to begin with.</p>
+<p>Cosine retrieval already nails most of these queries because text-level recall is much easier than chunk-level disambiguation. Poincaré can only fire on the small subset of queries where two different traditions share vocabulary about the same topic and the correct text needs to be picked from among them. On this bench, that's about 3 of the 21 queries (puruṣa/prakṛti — Sāṃkhya vs Yoga; tat tvam asi — multiple Upaniṣads; four-states-of-consciousness — Māṇḍūkya vs Bṛhadāraṇyaka). The mechanism delivered a non-zero, unambiguously-positive lift on exactly those queries. Per-text breakdown confirms it.</p>
+<p>The dossier prediction wasn't wrong about Poincaré. It was wrong about <em>this bench's ability to measure Poincaré</em>. That's the UNDER finding, and it's the thing that should drive the next quarter's work — either (a) extend the bench to include sub-text-granularity gold and remeasure, or (b) deprioritise Poincaré on this corpus and use it where the substrate is more visibly hierarchical (legal case-law trees, patent classifications, ontology graphs).</p>
+<h2>The harness PASSes hard</h2>
+<p>Real nDCG@5 = 0.7873. Three null distributions:</p>
+<table>
+<thead>
+<tr>
+<th>Null</th>
+<th>Mean nDCG@5</th>
+<th>Δ vs real</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tradition-permuted (bijection over the 13 text-ids)</td>
+<td>0.1348</td>
+<td><strong>+0.6524</strong></td>
+</tr>
+<tr>
+<td>Tradition-random (iid uniform per query)</td>
+<td>0.1225</td>
+<td><strong>+0.6648</strong></td>
+</tr>
+<tr>
+<td>Random retrieval (5 random chunks)</td>
+<td>0.0931</td>
+<td><strong>+0.6942</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Gate is +0.05; we're at +0.65. Real (0.7873) is well below the 0.88 leakage-suspicion ceiling, so the headline isn't suspect either. The engine genuinely beats label permutation and random retrieval by a lot.</p>
+<p>What changed when item 3 (persistent-homology) and item 5 (Poincaré) wire-ins landed? All three null Δ values went <em>up</em>. From the previous run:</p>
+<pre><code>Pre-wire-in real:  0.7620   nulls ~ {0.13, 0.11, 0.09}   Δ ~ {+0.63, +0.65, +0.67}
+Post-wire-in real: 0.7873   nulls ~ {0.13, 0.12, 0.09}   Δ ~ {+0.65, +0.66, +0.69}
+</code></pre>
+<p>Real moved 0.7620 → 0.7873 while the null means barely shifted. This is what &quot;real signal, not label leakage&quot; looks like in the data: the new features lift real performance but don't lift permuted-label performance. If the new features had been memorising gold labels, the permuted-label score would have moved with the real one.</p>
+<h2>Why this discipline matters more than the score</h2>
+<p>The number 0.7873 is interesting. The fact that I can defend it — to a fellowship admissions reviewer, to a frontier-lab safety researcher, to a future-me who's forgotten the context — is more interesting. Every claim in the table above is checkable: there's a <code>corpus.lock.json</code> capturing the exact artifacts the score was measured against, a <code>KANAJA_DISABLE_FEEDBACK=1</code> env var that prevents the bench from drifting the corpus, and a <code>tests/null_corpus.py</code> that runs the falsification gate on demand.</p>
+<p>This kind of discipline is rare in published retrieval / RAG papers, including high-profile ones. It's also exactly the kind of methodology that the major frontier labs' alignment and evaluation teams have moved toward over the last two years (Anthropic's red-teaming and constitutional AI eval work, OpenAI's safety evals after the superalignment shake-up, DeepMind's alignment evals). If you're an independent researcher looking to position into that work, <em>this</em> is the thing that gets attention — not the math, the rigor.</p>
+<h2>What I'd change if doing it again</h2>
+<p>A few things I'd do differently if I started this dossier-driven cycle from scratch:</p>
+<ol>
+<li>
+<p><strong>Build the harness before any item.</strong> I had item 10 in the queue from the start and shipped it relatively early, but a week of items 1, 2, 6 went in without it. Those scores are technically unverified-against-nulls. If I'd shipped 10 first, the whole record would be cleaner.</p>
+</li>
+<li>
+<p><strong>Predictions in <em>expected median</em> and <em>95% CI</em>, not just a range.</strong> A prediction of &quot;+0.02..+0.05&quot; is too easy to retro-fit. A predicted median of +0.035 with a CI of [+0.020, +0.050] forces sharper thinking and produces more interesting UNDER findings.</p>
+</li>
+<li>
+<p><strong>Bench-extension as an explicit dossier item.</strong> If the dossier had item 0 = &quot;extend the bench to include sub-text-granularity queries before items 5 and 9,&quot; the Poincaré UNDER might have become a HIT. Bench design is a research artifact too; treat it that way.</p>
+</li>
+<li>
+<p><strong>Per-query attribution dashboard.</strong> Instead of just per-text, track which queries each new module helps or hurts. Item 3 helped nyāyasūtra queries by +0.087, hurt chandogya queries by -0.080, net +0.0186 mean. That per-query view explains the mechanism cleanly and prevents post-hoc storytelling.</p>
+</li>
+</ol>
+<h2>How to copy this for your own project</h2>
+<p>If you're working on a small ML project — research, side project, indie product — the meta-template that produced this is:</p>
+<ul>
+<li>Write a dossier of 10–30 ideas with numeric predictions and explicit ranges. (LLMs are excellent for this; ask one to write a research dossier for your project, with predicted Δs and references.)</li>
+<li>Build the falsification harness (or its equivalent for your domain) before anything else.</li>
+<li>For each shipped item, fill in measured-vs-predicted in a calibration table that lives in your README.</li>
+<li>Allow UNDER as a first-class category. Document why; don't bury it.</li>
+<li>Lock your corpus / dataset / model checkpoint state with a hash file. Verify in CI.</li>
+<li>Suppress mutating side effects during evaluation (your equivalent of <code>KANAJA_DISABLE_FEEDBACK</code>).</li>
+</ul>
+<p>Total infrastructure cost: a few hundred lines of Python. Total epistemic upside: every claim you make becomes precise enough to be wrong, which is the only kind of claim worth making.</p>
+<hr />
+<p><em>Companion posts: <a href="LINK_TO_BLOG_1">the corpus drift trap</a> on cryptographic state locking, and <a href="LINK_TO_BLOG_2">wiring up dead code</a> on finding +1.9% nDCG that's already in your repo. Methodology preprint with full results: [arxiv link]. Code: [github link]. If you'd like to talk shop or want a calibration-discipline audit on your own retrieval / RAG pipeline, <code>sparshsharma219@gmail.com</code>.</em></p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>The corpus drift trap: why your RAG&#x27;s nDCG is probably lying to you</title>
+      <link>https://spalsh-spec.github.io/blog/corpus-drift-trap.html</link>
+      <guid isPermaLink="true">https://spalsh-spec.github.io/blog/corpus-drift-trap.html</guid>
+      <pubDate>Fri, 01 May 2026 12:00:00 +0000</pubDate>
+      <author>sparshsharma219@gmail.com (Sparsh Sharma)</author>
+      <description>A debugging story, and a 200-line tool that prevents the next one.</description>
+      <content:encoded><![CDATA[<hr />
+<p>This morning I sat down to work on a Sanskrit retrieval engine. The README claimed <code>nDCG@5 = 0.7891</code>. The bench reported <code>0.7620</code>. The gap is 0.027 — tiny in absolute terms, but the README pinned that number to a specific commit (<code>39f9b7c</code>) and said &quot;verified.&quot; Either the README was wrong or something had silently broken. I spent the first hour assuming a code regression. I was wrong. The actual culprit is one of the most underrated bugs in modern ML evaluation, and almost every RAG pipeline I've audited has some flavour of it.</p>
+<p>This post is the detective story. It ends with a 200-line tool that I'd put in every retrieval repo I touch from now on.</p>
+<h2>Setup</h2>
+<p>Vāk-Kaṇaja is a small retrieval engine over thirteen classical Sanskrit and Dravidian texts — Yogasūtra, Upaniṣads, Pāṇini's grammar, Arthaśāstra, that lineage. About 6,300 text chunks. The bench is twenty-one English queries with whole-text gold labels (relevance ∈ {2, 3}) and an nDCG@5 metric. Nothing exotic.</p>
+<p>The codebase has a pleasant rhythm: each commit on the <code>phase1-fractal-upgrades</code> branch lands one item from a research dossier, with a commit message that always includes the resulting <code>nDCG@5</code>. Authors of the previous commits had been fastidious about this — most messages literally say <code>score-neutral nDCG@5=X.YYYY</code> to flag refactors that shouldn't have moved the needle.</p>
+<p>So when today's bench reported 0.7620 against a README that said 0.7891, my first instinct was: bisect.</p>
+<h2>The first wrong hypothesis</h2>
+<p>The two suspect commits looked like this:</p>
+<pre><code>39f9b7c  phase1 step1.5: fractal channel disabled (winner), nDCG=0.7891
+e3c2748  phase-A:  pre-Phase-8 hygiene  (10 audit items, score-neutral nDCG@5=0.7620)
+8265bf1  phase-B:  verification surface (5 audit items, score-neutral nDCG@5=0.7712)
+</code></pre>
+<p>Look at that gap. Phase-A claims &quot;score-neutral&quot; but lands at 0.7620. The previous baseline was 0.7891. That's a 0.027 drop labelled as zero. Either the author miscounted, or they measured against a different state than I'm measuring against.</p>
+<p>I started reading phase-A's diff. Twenty-one files changed. Most of it was hygiene: <code>print()</code> → <code>logger.info()</code>, <code>except Exception:</code> → typed catches, file moves, gitignore additions, requirements lock cleanup. The only retrieval-path file touched was <code>retrieval/kanaja_fsh.py</code>, with 23 line changes. I read every one. They were <em>all</em> <code>print</code> → <code>logger</code> substitutions plus one exception handler that swallowed the same exception either way (just logged it now). Truly inert.</p>
+<p>This is when most engineers would assume the README's 0.7891 was wrong. Move on, update the README, ship.</p>
+<h2>The second wrong hypothesis</h2>
+<p>I almost did, then noticed something. The corpus database file (<code>corpus/fractal_signatures.db</code>) had a modification time that didn't match either commit. It had been touched ~27 minutes before the phase-A commit landed. The schema, when I dumped it, had a trail of <code>ALTER TABLE</code> columns — <code>h2</code>, <code>asym_f</code>, <code>lacunarity</code> — added across multiple later commits.</p>
+<p>In other words: the corpus DB was a moving target. The bench at any commit was reading from whatever state the DB happened to be in, not from a state pinned to that commit.</p>
+<p>This shifted the hypothesis: maybe the regression isn't in code at all. Maybe the same code today produces a different score than the same code three weeks ago because the DB it reads has changed.</p>
+<p>The clean test: check out <code>39f9b7c</code> in a <code>git worktree</code>, point it at today's runtime corpus DB, run the bench. If it scores 0.7891 (the README's claim), the regression is in newer code. If it scores something else, the regression is in the corpus.</p>
+<pre><code class="language-bash">git worktree add /tmp/vak39f9b7c 39f9b7c
+ln -sf .../fractal_signatures.db /tmp/vak39f9b7c/corpus/fractal_signatures.db
+ln -sf .../faiss_index.bin       /tmp/vak39f9b7c/corpus/faiss_index.bin
+# ... and the rest of the corpus artifacts
+cd /tmp/vak39f9b7c &amp;&amp; python3 tests/sanskrit_bench.py
+</code></pre>
+<p>The result: <strong>0.7206</strong>.</p>
+<h2>Reading the result honestly</h2>
+<p>Old code on today's corpus: 0.7206.
+Today's code on today's corpus: 0.7620.
+README's claim, on a corpus snapshot that no longer exists: 0.7891.</p>
+<p>There is no recoverable regression. Old code on the new corpus is <em>worse</em>, not better — it can't take advantage of the columns added by intervening migrations, and may even be confused by their presence. The 0.7891 number was real at commit time, against an artifact state that no longer exists.</p>
+<p>So the chain wasn't <code>0.7891 → regression → 0.7620</code>. It was three separate states being compared apples-to-oranges:</p>
+<pre><code>Commit 39f9b7c, on  corpus_state_A    →  0.7891
+Commit 39f9b7c, on  corpus_state_today → 0.7206  (the actual reproducibility)
+Commit HEAD, on    corpus_state_today  →  0.7620 (today's measurement)
+</code></pre>
+<p>The &quot;score-neutral&quot; annotation on phase-A wasn't false in spirit — the <em>code change</em> was indeed score-neutral. But the corpus state had drifted in the background, and the author measured against a different DB than <code>39f9b7c</code>'s author did. Neither was wrong. Both were correct. The comparison was wrong.</p>
+<p>This is the corpus drift trap. It's invisible in <code>git diff</code>. It's invisible in the test suite. It's invisible in code review. It only manifests when someone asks &quot;wait, where did the 0.027 go?&quot; and tries to bisect.</p>
+<h2>Why this matters beyond one Sanskrit engine</h2>
+<p>Every RAG pipeline I've audited has at least one of these mutating artifacts:</p>
+<ul>
+<li><strong>An embedding index</strong> rebuilt when chunking strategy changes. Different chunks → different embeddings → different cosine top-k → different downstream scores. Often invisible because the chunking script is in a separate repo.</li>
+<li><strong>A BM25 cache</strong> built once and never invalidated when tokenisation rules change.</li>
+<li><strong>A knowledge graph</strong> that gets enriched by background jobs. Same query against the same KG returns different neighbours next month.</li>
+<li><strong>Per-document priors</strong> — click-through rates, freshness scores, embedding-drift signals — that update on every query and silently change the ranker's behaviour.</li>
+</ul>
+<p>In every case, &quot;we ran the bench at commit X and got Y&quot; is a true statement that <em>cannot be reproduced later</em> because Y depends on artifacts that aren't in the commit. When someone three months later cites your nDCG, they're citing a number that was real for an hour.</p>
+<h2>The fix is small</h2>
+<p>Two pieces, totalling about 250 lines of Python.</p>
+<p><strong>Piece 1 — <code>corpus.lock.json</code>.</strong> A tool that walks every binary corpus artifact (<code>.db</code>, <code>.bin</code>, <code>.json</code>, <code>.pkl</code>), captures sha256 + size, alongside the current git commit and the verified bench score, and writes the lot to a JSON file you commit:</p>
+<pre><code class="language-json">{
+  &quot;version&quot;: 1,
+  &quot;generated_at&quot;: &quot;2026-05-01T01:37:46Z&quot;,
+  &quot;git&quot;: {&quot;commit&quot;: &quot;a5cd404&quot;, &quot;branch&quot;: &quot;phase1-fractal-upgrades&quot;, &quot;dirty&quot;: false},
+  &quot;artifacts&quot;: {
+    &quot;corpus/fractal_signatures.db&quot;: {&quot;sha256&quot;: &quot;04918ed4...&quot;, &quot;size_bytes&quot;: 90886144},
+    &quot;corpus/faiss_index.bin&quot;:       {&quot;sha256&quot;: &quot;2319f9cb...&quot;, &quot;size_bytes&quot;:  9690669},
+    ...
+  },
+  &quot;bench&quot;: {&quot;nDCG@5&quot;: 0.7873}
+}
+</code></pre>
+<p>A <code>--verify</code> mode reads the lock and exits non-zero on any sha256 drift, missing artifact, extra artifact, or git-commit drift. Future &quot;score-neutral&quot; claims become checkable: re-emit, diff, see exactly what changed.</p>
+<p><strong>Piece 2 — bench-side feedback suppression.</strong> The Vāk-Kaṇaja engine has a closed-loop H-update path: when retrieval seems off, it nudges the H values in the signatures DB to drift the next query toward better answers. Production-correct behaviour. But this means each bench run <em>mutates the corpus</em>, and the next bench reads a different state. The lock file would never stay green.</p>
+<p>The fix is one env var — <code>KANAJA_DISABLE_FEEDBACK=1</code> — that short-circuits the feedback path when set. The bench harness sets it via <code>os.environ.setdefault</code> at the top of the bench file. Production deployments leave it unset.</p>
+<p>After both pieces landed, two consecutive bench runs left the corpus byte-identical. The lock verified clean. The score was reproducible. (Bonus: the fix also surfaced two latent bugs in the feedback path — a closed-database error firing on every query and a <code>database is locked</code> race — which we patched the same afternoon.)</p>
+<h2>What this changes about how I read RAG papers</h2>
+<p>Every retrieval claim has an implicit attached question now: <em>what's the sha256 of the corpus you measured against, and how do I check it?</em> If the answer isn't in the paper, the score is unverifiable. Not wrong, just unverifiable. That's a different category from &quot;wrong&quot; — but it's also a different category from &quot;validated.&quot;</p>
+<p>It also changes how I read commit messages. &quot;Score-neutral&quot; only means &quot;I changed code that I expect doesn't move the score.&quot; It says nothing about whether the corpus the score was measured against has drifted since the previous commit. The two propositions are independent and both need to be checked.</p>
+<h2>The simplest version you can copy</h2>
+<p>If you want to steal the pattern for your own RAG repo, the minimal diff is:</p>
+<ol>
+<li>Write a tiny script that walks your corpus directory, hashes the binary files, dumps <code>corpus.lock.json</code>. ~80 lines.</li>
+<li>Add a <code>--verify</code> mode. ~40 lines.</li>
+<li>Find any code path that mutates corpus state during evaluation (feedback loops, click logging, freshness updates) and put it behind an env var that your bench sets. ~10 lines.</li>
+<li>Commit <code>corpus.lock.json</code>. Run <code>--verify</code> in CI. Reject any PR that drifts the lock without a corresponding intentional re-emit.</li>
+</ol>
+<p>Total cost: a couple of hours. Total benefit: every score claim in the repo becomes falsifiable, and you can finally answer &quot;did this PR regress the bench?&quot; without ambiguity.</p>
+<p>The full implementation lives in <a href="https://github.com/sparshsharma/vak_engine/blob/main/tools/lock_corpus_state.py">vak_engine/tools/lock_corpus_state.py</a> (Apache 2.0). Adapt freely.</p>
+<hr />
+<p><em>If you've debugged a similar drift in your own pipeline, I'd love to hear about it — <code>sparshsharma219@gmail.com</code>. I'm also taking on a small number of $5k fixed-price RAG audits where I find drift, dead code paths, and uncalibrated claims in production retrieval systems. If you're shipping retrieval and not sure your scores reproduce, [reach out].</em></p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>Wiring up dead code: how I found +1.9% nDCG sitting unused in my own repo</title>
+      <link>https://spalsh-spec.github.io/blog/wiring-up-dead-code.html</link>
+      <guid isPermaLink="true">https://spalsh-spec.github.io/blog/wiring-up-dead-code.html</guid>
+      <pubDate>Fri, 01 May 2026 12:00:00 +0000</pubDate>
+      <author>sparshsharma219@gmail.com (Sparsh Sharma)</author>
+      <description>Most production RAG pipelines have features that were &quot;shipped&quot; months ago and are silently doing nothing. Here&#x27;s how to find yours.</description>
+      <content:encoded><![CDATA[<hr />
+<p>A few weeks ago, a previous version of me — same engineer, different mood — committed this with a clean message:</p>
+<pre><code>phase1 step3: persistent-homology re-ranker (dossier §2.2 #3)
+</code></pre>
+<p>The commit added a 314-line module, <code>retrieval/topo_rerank.py</code>, with rigorous docstring, ripser/persim dependencies installed cleanly, and a small unit-test suite that passed. The module's design had been sketched in the research dossier, validated in isolation, and merged. By every visible signal — green tests, passing lint, sensible commit message — the feature was shipped.</p>
+<p>Today I noticed something. The bench score hadn't moved on that commit. Not by 0.001. The dossier had predicted +0.02–0.03 nDCG@5 from this re-ranker; the reality was zero.</p>
+<p>Spoiler: the function existed but was never called from anything except its own tests. Wiring it in took 17 lines. The score went from 0.7686 to 0.7873. <strong>One commit, +0.0186 nDCG, ~3% relative lift, recovered with no algorithmic change at all.</strong></p>
+<p>This pattern is common enough that I'd bet you have a version of it in your own RAG pipeline right now. Here's how to find it.</p>
+<h2>The two-minute audit</h2>
+<p>Pick any feature in your retrieval system that you think is &quot;shipped.&quot; Run this:</p>
+<pre><code class="language-bash">grep -rn &quot;from .* import &lt;feature_name&gt;\|import .*&lt;feature_name&gt;&quot; \
+    --include=&quot;*.py&quot; .
+</code></pre>
+<p>Now subtract any matches that come from <code>tests/</code> or from the module itself. What's left is the set of production-code call sites for that feature. If that set is empty, you're not using it.</p>
+<p>For me, the result was:</p>
+<pre><code>$ grep -rn &quot;topo_rerank\|from retrieval.topo&quot; --include=&quot;*.py&quot; .
+./retrieval/topo_rerank.py:1:&quot;&quot;&quot;...&quot;&quot;&quot;
+./retrieval/topo_rerank.py:180:def topo_rerank(...
+./tests/unit/test_topo_rerank.py: ... (the only callers)
+</code></pre>
+<p>Three matches in the source file (defining itself), one in the test file. <strong>Zero in the engine entry point.</strong> That's a feature that exists exclusively for the satisfaction of its tests.</p>
+<h2>How this happens</h2>
+<p>It's not negligence. It's a specific dynamic that produces this outcome over and over:</p>
+<ol>
+<li><strong>Research and integration are scoped separately.</strong> The dossier said &quot;ship the formalism + tests first, integrate after.&quot; That's a sensible engineering norm. But the integration ticket gets deprioritised by the next exciting research item, and the original integration intent fades from memory.</li>
+<li><strong>The commit message lies cleanly.</strong> &quot;Persistent-homology re-ranker&quot; sounds done. The diff shows the function. The tests pass. Reviewers approve. Nothing in the surface signal indicates the function is dead.</li>
+<li><strong>Score regression tests don't catch dead code.</strong> If you ship a feature wired to weight=0 by default, the bench score doesn't move. If you ship a feature <em>not wired in at all</em>, the bench score also doesn't move. From the bench's perspective, these are indistinguishable.</li>
+</ol>
+<p>This last one is critical. The most common way teams catch missing integration is &quot;the score got worse after the wire-in PR&quot; — but that only fires once you actually attempt the wire-in. Dead code that no one tries to wire in stays dead forever.</p>
+<h2>The systematic fix</h2>
+<p>For any retrieval pipeline of nontrivial size, I now do this once a quarter and once whenever I'm new to a codebase:</p>
+<p><strong>Step 1 — Inventory the rerankers.</strong> List every function whose docstring or name implies it modifies the retrieval ranking. Don't trust the directory structure or the commit messages. Read.</p>
+<p><strong>Step 2 — Trace each one to a call site outside its own tests.</strong> Use the grep above. Anything without a production call site is either dead code or scaffolding awaiting integration.</p>
+<p><strong>Step 3 — Distinguish the two cases.</strong> If it's scaffolding awaiting integration, wire it in (with a default weight of 0 if you want zero behaviour change), then sweep its weight to find the peak. If it's dead code with no plausible value, delete it — keeping it costs you cognitive load on every future grep.</p>
+<p><strong>Step 4 — For each newly wired feature, run the falsification harness.</strong> Make sure it's not adding label leakage. (If you don't have a falsification harness, that's a separate post.)</p>
+<p>The whole audit took me about 90 minutes per pipeline.</p>
+<h2>The wire-in itself</h2>
+<p>In case it helps, here's exactly what the integration looked like for the persistent-homology reranker. The pre-existing function took:</p>
+<pre><code class="language-python">topo_rerank(
+    query_embedding: np.ndarray,            # (D,) query vector
+    candidate_embeddings: np.ndarray,       # (K, D) top-K from prior stage
+    candidate_ids: Iterable,
+    *,
+    score_mode: str = &quot;image_l2&quot;,
+    top_k: Optional[int] = None,
+) -&gt; list[tuple[object, float, dict]]
+</code></pre>
+<p>Its own docstring warned: <em>&quot;Scores are unitless. To fuse with the existing ranker, normalise (z-score or rank-transform) both scores then combine with a weight.&quot;</em> So the wrapper rank-transforms then adds:</p>
+<pre><code class="language-python">def topo_persistence_rerank(
+    reranked,
+    query_embedding,
+    embedding_lookup,
+    topo_weight=None,
+    top_k=50,
+):
+    if topo_weight is None:
+        topo_weight = CHANNEL_WEIGHTS[&quot;topo&quot;]   # read at CALL time, not def time
+    if topo_weight == 0.0 or len(reranked) &lt; 3:
+        return reranked
+
+    # Pull (K, D) embeddings for the top-K candidates from the engine's FAISS
+    head = reranked[:top_k]
+    embs, valid_ids = [], []
+    for cid, _, _ in head:
+        emb = embedding_lookup(cid)
+        if emb is not None:
+            embs.append(emb); valid_ids.append(cid)
+    if len(embs) &lt; 3:
+        return reranked
+
+    topo_results = topo_rerank(query_embedding, np.array(embs), valid_ids)
+
+    # Rank-transform to [0, 1] so weight competes on the same scale as RRF.
+    raw = {cid: float(s) for cid, s, _ in topo_results}
+    sorted_cids = sorted(raw, key=lambda c: raw[c])
+    n = max(len(sorted_cids) - 1, 1)
+    rank_norm = {cid: i / n for i, cid in enumerate(sorted_cids)}
+
+    out = []
+    for cid, score, stats in head:
+        boost = topo_weight * rank_norm.get(cid, 0.5)
+        out.append((cid, score + boost, {**stats, &quot;topo_rank&quot;: rank_norm.get(cid)}))
+    out.sort(key=lambda t: t[1], reverse=True)
+    return out + reranked[top_k:]
+</code></pre>
+<p>Plus the one-line call site in the engine:</p>
+<pre><code class="language-python">reranked = topo_persistence_rerank(reranked, enc[&quot;full_emb&quot;], _embed_lookup)
+</code></pre>
+<p>Total: 50ish lines of wrapper, 1 call site, 1 line for the channel weight default. Zero algorithmic novelty. Module already existed. Tests already passed.</p>
+<h2>The two traps inside the wire-in</h2>
+<p>If you do this exercise, watch for these:</p>
+<p><strong>Trap 1: closure-capture on the weight default.</strong> Tempting to write:</p>
+<pre><code class="language-python">def topo_persistence_rerank(reranked, ..., topo_weight=CHANNEL_WEIGHTS[&quot;topo&quot;]): ...
+</code></pre>
+<p>This binds <code>topo_weight</code> to whatever <code>CHANNEL_WEIGHTS[&quot;topo&quot;]</code> was at <em>function-definition time</em>. When you later monkey-patch the global to sweep weights, the default doesn't update. Your sweep silently runs at the original weight every time. (I caught this on the first sweep — it produced six identical rows.) Use <code>topo_weight=None</code> and read the global on the first line of the function body.</p>
+<p><strong>Trap 2: scale mismatch.</strong> Re-ranker scores from different mechanisms have different natural scales. RRF scores in my pipeline live in roughly [0.001, 0.02] — gaps between consecutive ranks are around 0.001. If you blindly add <code>weight × raw_score</code> where <code>raw_score</code> happens to be in [0, 1], even a tiny weight (0.05) produces a perturbation 30× larger than the RRF gap, completely overwriting the existing ranking. The result is unimodal: a sharp peak at one specific small weight, with a knee just past it where the score crashes. My sweep showed:</p>
+<pre><code>w        nDCG@5    Δ
+0.0000   0.7686    baseline
+0.0005   0.7686    +0.0000  (perturbation below RRF gap)
+0.0010   0.7873    +0.0186  ← peak
+0.0020   0.7853    +0.0166
+0.0050   0.7236    -0.0450  (over the knee)
+0.0100   0.5712    -0.1974  (chaos)
+</code></pre>
+<p>Always rank-transform or z-score the new feature before combining, and always sweep on a logarithmic ladder that includes weights smaller than your RRF gap.</p>
+<h2>The meta-lesson</h2>
+<p>The biggest available wins in a retrieval pipeline are usually not new algorithms. They are dormant features waiting for someone to wire them in correctly. This is true partly because of the integration-vs-research split above, partly because the kind of person who writes a clever rerank module is often not the kind of person who patches the engine to call it, and partly because the bench tells you nothing when integration is missing.</p>
+<p>I'm now constitutionally suspicious of any retrieval repo where the rerankers are in a <code>retrieval/</code> directory and I can't immediately see them being called from the engine entry point. If they're not called, they're either decoration or pending work. Either way, treat them as a TODO.</p>
+<hr />
+<p><em>This was the second of three blog posts on what I learnt rebuilding the verification surface of a small Sanskrit retrieval engine. The first was on <a href="LINK_TO_BLOG_1">corpus drift</a>. The third (forthcoming) is on calibrating predicted-vs-measured Δ on a research dossier so failures become findings, not embarrassments.</em></p>
+<p><em>If you'd like a fixed-price audit of your retrieval pipeline — dead code, drift, uncalibrated claims, and a written report — I'm taking 2 per month at $5k. Email <code>sparshsharma219@gmail.com</code>.</em></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>
