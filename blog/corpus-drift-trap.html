@@ -149,7 +149,7 @@ Commit HEAD, on    corpus_state_today  →  0.7620 (today's measurement)
 <li>Commit <code>corpus.lock.json</code>. Run <code>--verify</code> in CI. Reject any PR that drifts the lock without a corresponding intentional re-emit.</li>
 </ol>
 <p>Total cost: a couple of hours. Total benefit: every score claim in the repo becomes falsifiable, and you can finally answer &quot;did this PR regress the bench?&quot; without ambiguity.</p>
-<p>The full implementation lives in <a href="https://github.com/sparshsharma/vak_engine/blob/main/tools/lock_corpus_state.py">vak_engine/tools/lock_corpus_state.py</a> (Apache 2.0). Adapt freely.</p>
+<p>A reference implementation of the lock protocol — <code>lock_state</code> and <code>verify_state</code> — is in the public <code>falsify-eval</code> library at <a href="https://github.com/spalsh-spec/falsify-eval/blob/main/falsify_eval/lock.py">github.com/spalsh-spec/falsify-eval</a> (Apache 2.0). Adapt freely.</p>
 <hr />
 <p><em>If you've debugged a similar drift in your own pipeline, I'd love to hear about it — <code>sparshsharma219@gmail.com</code>. I'm also taking on a small number of $5k fixed-price RAG audits where I find drift, dead code paths, and uncalibrated claims in production retrieval systems. If you're shipping retrieval and not sure your scores reproduce, [reach out].</em></p>
 

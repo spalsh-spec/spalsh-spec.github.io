@@ -128,7 +128,7 @@ If you want to steal the pattern for your own RAG repo, the minimal diff is:
 
 Total cost: a couple of hours. Total benefit: every score claim in the repo becomes falsifiable, and you can finally answer "did this PR regress the bench?" without ambiguity.
 
-The full implementation lives in [vak_engine/tools/lock_corpus_state.py](https://github.com/sparshsharma/vak_engine/blob/main/tools/lock_corpus_state.py) (Apache 2.0). Adapt freely.
+A reference implementation of the lock protocol — `lock_state` and `verify_state` — is in the public `falsify-eval` library at [github.com/spalsh-spec/falsify-eval](https://github.com/spalsh-spec/falsify-eval/blob/main/falsify_eval/lock.py) (Apache 2.0). Adapt freely.
 
 ---
 
